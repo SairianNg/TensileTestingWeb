@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tensile Test Analyzer™ — Stress &amp; Strain</title>
+    <meta name="description"
+        content="Upload tensile test CSV data to calculate stress, strain, and visualize displacement vs load and stress vs strain curves." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+
+    <!-- ───────────── Background blobs ───────────── -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+
+    <!-- ───────────── Header ───────────── -->
+    <header class="app-header">
+        <div class="logo">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect width="32" height="32" rx="8" fill="url(#logo-grad)" />
+                <path d="M10 22V10l6 8 6-8v12" stroke="#fff" stroke-width="2.2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <defs>
+                    <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32">
+                        <stop stop-color="#6366f1" />
+                        <stop offset="1" stop-color="#a855f7" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span>Tensile Test <strong>Analyzer</strong>™</span>
+        </div>
+    </header>
+
+    <!-- ───────────── Main content ───────────── -->
+    <main class="container">
+
+        <!-- Upload Card -->
+        <section class="card upload-card" id="upload-section">
+            <h1>Upload Your Data</h1>
+            <p class="subtitle">Drop a CSV file with <em>Displacement</em> and <em>Load (N)</em> columns</p>
+
+            <form id="upload-form" enctype="multipart/form-data">
+                <!-- Drop zone -->
+                <div class="drop-zone" id="drop-zone">
+                    <svg class="drop-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                        <path d="M24 32V16m0 0l-6 6m6-6l6 6" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M8 30v4a6 6 0 006 6h20a6 6 0 006-6v-4" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" />
+                    </svg>
+                    <p class="drop-text">Drag &amp; drop your <strong>.csv</strong> file here</p>
+                    <p class="drop-or">or</p>
+                    <label for="file-input" class="btn btn-outline">Browse Files</label>
+                    <input type="file" id="file-input" name="file" accept=".csv" hidden />
+                    <p class="file-name" id="file-name"></p>
+                </div>
+
+                <!-- Specimen parameters -->
+                <div class="params-row">
+                    <div class="param-group">
+                        <label for="area-input">Cracked Area (m²)</label>
+                        <input type="number" id="area-input" name="area" value="0.003" step="any" min="0.000001"
+                            required />
+                    </div>
+                    <div class="param-group">
+                        <label for="length-input">Original Length (m)</label>
+                        <input type="number" id="length-input" name="length" value="1.0" step="any" min="0.0001"
+                            required />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="analyze-btn">
+                    <span class="btn-label">Analyze Data</span>
+                    <span class="spinner" id="spinner"></span>
+                </button>
+            </form>
+
+            <!-- Error message -->
+            <div class="error-toast" id="error-toast"></div>
+        </section>
+
+        <!-- Metrics Row -->
+        <section class="metrics-row hidden" id="metrics-section">
+            <div class="metric-card">
+                <span class="metric-label">Max Stress</span>
+                <span class="metric-value" id="metric-stress">—</span>
+                <span class="metric-unit">MPa</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Max Strain</span>
+                <span class="metric-value" id="metric-strain">—</span>
+                <span class="metric-unit">mm/mm</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Max Load</span>
+                <span class="metric-value" id="metric-load">—</span>
+                <span class="metric-unit">N</span>
+        </section>
+
+        <!-- Charts -->
+        <section class="charts-row hidden" id="charts-section">
+            <div class="card chart-card">
+                <h2>Displacement vs Load</h2>
+                <p class="chart-subtitle">Raw experimental data</p>
+                <div class="chart-wrapper">
+                    <canvas id="chart-load"></canvas>
+                </div>
+            </div>
+            <div class="card chart-card">
+                <h2>Stress vs Strain</h2>
+                <p class="chart-subtitle">Calculated from σ = F/A &amp; ε = ΔL/L</p>
+                <div class="chart-wrapper">
+                    <canvas id="chart-stress"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ───────────── Footer ───────────── -->
+    <footer class="app-footer">
+        <p>Tensile Test Analyzer™ &copy; 2026 &mdash; Built for Materials Science Labs</p>
+    </footer>
+
+    <script src="/static/js/script.js?v=3"></script>
+</body>
+
+</html>
